@@ -10,63 +10,67 @@ def do_sequences_match(source, index1, index2, length):
     return True
 
 
-def lz77_encode(source, window_size=65535, lookahead_window_size=255):
-    def find_shared_sequence_in_window(source_i):
-        if source_i == 0:
-            return (source_i, 1)
+def find_longest_prefix_in_window(symbols, symbol_i, 
+        window_size, lookahead_window_size):
 
-        start_of_window = max(0, source_i-window_size)
-        end_of_lookahead = min(len(source), source_i+lookahead_window_size+1)
+    if symbol_i == 0:
+        return (symbol_i, 1)
 
-        longest_seq_index, longest_seq_len = source_i, 1
-        window_i, cur_seq_len = source_i-1, 1
+    start_of_window = max(0, symbol_i-window_size)
+    end_of_lookahead = min(len(symbols), symbol_i+lookahead_window_size+1)
 
-        while start_of_window <= window_i:
-            would_overflow_window = window_i + cur_seq_len > source_i
+    longest_prefix_i, longest_prefix_len = symbol_i, 1
+    window_i, cur_prefix_len = symbol_i-1, 1
 
-            if would_overflow_window:
-                window_i -= 1
-            elif do_sequences_match(source, window_i, source_i, cur_seq_len):
-                longest_seq_index = window_i
-                longest_seq_len = cur_seq_len
+    while start_of_window <= window_i:
+        looking_outside_window = window_i + cur_prefix_len > symbol_i
 
-                cur_seq_len += 1  # going to look for a longer sequence
+        if looking_outside_window:
+            window_i -= 1
+        elif do_sequences_match(symbols, window_i, symbol_i, cur_prefix_len):
+            longest_prefix_i = window_i
+            longest_prefix_len = cur_prefix_len
 
-                looking_outside_lookahead_window = source_i + cur_seq_len > end_of_lookahead
-                if looking_outside_lookahead_window:
-                    break  # can
-            else:
-                window_i -= 1
+            cur_prefix_len += 1  # going to look for a longer prefix
 
-        return (longest_seq_index, longest_seq_len)
-
-    result = []
-    byte_ptr = 0
-
-    while byte_ptr < len(source):
-        (ptr, seq_len) = find_shared_sequence_in_window(byte_ptr)
-
-        if ptr == byte_ptr:
-            result.append((0, 0, source[byte_ptr]))
-            byte_ptr += 1
+            looking_outside_lookahead_window = symbol_i + cur_prefix_len > end_of_lookahead
+            if looking_outside_lookahead_window:
+                break  # can
         else:
-            how_far_back = byte_ptr - ptr
-            next_byte = source[byte_ptr+seq_len] if byte_ptr + \
-                seq_len < len(source) else None
+            window_i -= 1
 
-            result.append((how_far_back, seq_len, next_byte))
-            byte_ptr += seq_len+1
+    return (longest_prefix_i, longest_prefix_len)
+
+def lz77_encode(symbols, window_size=65535, lookahead_window_size=255):
+    result = []
+    symbol_i = 0
+
+    while symbol_i < len(symbols):
+        (prefix_i, prefix_len) = find_longest_prefix_in_window(
+            symbols, symbol_i, window_size, lookahead_window_size)
+
+        if prefix_i == symbol_i:
+            result.append((0, 0, symbols[symbol_i]))
+            symbol_i += 1
+        else:
+            how_far_back = symbol_i - prefix_i
+            next_symbol = symbols[symbol_i+prefix_len] if \
+                symbol_i + prefix_len < len(symbols) else None
+
+            result.append((how_far_back, prefix_len, next_symbol))
+            symbol_i += prefix_len+1
 
     return result
 
 
-def lz77_decode(source):
+def lz77_decode(symbols):
+    "Decodes a LZ77 encoded sequence of symbols"
     result, ptr = [], 0
-    for (far_back, length, byte) in source:
+    for (far_back, length, symbol) in symbols:
         if length > 0:
             result.extend(result[ptr-far_back:ptr-far_back+length])
-        if byte != None:
-            result.append(byte)
+        if symbol != None:
+            result.append(symbol)
         ptr += length+1
 
     return result
@@ -91,17 +95,8 @@ def lz77_decode_string(source):
 
 
 def check_string(string):
+    "asserts that string can be encoded and decoded using LZ77 coding"
     matches = string == lz77_decode_string(lz77_encode_string(string))
     if not matches:
         print("failed on string:", string)
         assert False
-
-
-if __name__ == "__main__":
-    import random
-    import string
-
-    while True:
-        s2 = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                     for _ in range(10))
-        check_string(s2)
