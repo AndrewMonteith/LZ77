@@ -10,8 +10,8 @@ def do_sequences_match(source, index1, index2, length):
     return True
 
 
-def find_longest_prefix_in_window(symbols, symbol_i, 
-        window_size, lookahead_window_size):
+def find_longest_prefix_in_window(symbols, symbol_i,
+                                  window_size, lookahead_window_size):
 
     if symbol_i == 0:
         return (symbol_i, 1)
@@ -41,7 +41,8 @@ def find_longest_prefix_in_window(symbols, symbol_i,
 
     return (longest_prefix_i, longest_prefix_len)
 
-def lz77_encode(symbols, window_size=65535, lookahead_window_size=255):
+
+def encode(symbols, window_size=65535, lookahead_window_size=255):
     result = []
     symbol_i = 0
 
@@ -63,7 +64,7 @@ def lz77_encode(symbols, window_size=65535, lookahead_window_size=255):
     return result
 
 
-def lz77_decode(symbols):
+def decode(symbols):
     "Decodes a LZ77 encoded sequence of symbols"
     result, ptr = [], 0
     for (far_back, length, symbol) in symbols:
@@ -83,20 +84,19 @@ def string_to_bytes(str):
     return b
 
 
-def lz77_encode_string(string, window_size=65535, lookahead_window_size=255):
+def encode_string(string, window_size=65535, lookahead_window_size=255):
     "Encodes string using LZ77 coding."
-    return lz77_encode(
-        string_to_bytes(string), window_size, lookahead_window_size)
+    return encode(string_to_bytes(string), window_size, lookahead_window_size)
 
 
-def lz77_decode_string(source):
+def decode_string(source):
     "Decodes LZ77 encoded string."
-    return ''.join(chr(x) for x in lz77_decode(source))
+    return ''.join(chr(x) for x in decode(source))
 
 
 def check_string(string):
     "asserts that string can be encoded and decoded using LZ77 coding"
-    matches = string == lz77_decode_string(lz77_encode_string(string))
+    matches = string == decode_string(encode_string(string))
     if not matches:
         print("failed on string:", string)
         assert False
