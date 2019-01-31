@@ -1,13 +1,11 @@
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.function.Supplier;
+import java.nio.file.Files;
 
-final class FatIndex {
+class FatIndex {
     public final int index;
     public final int len;
 
@@ -19,17 +17,17 @@ final class FatIndex {
 
 final class LZ77Triple {
     public final int d;
-    public final short l;
+    public final char l; // char are unsigned byte.
     public final byte next;
 
-    public LZ77Triple(int d, short l, byte next) {
+    public LZ77Triple(int d, char l, byte next) {
         this.d = d;
         this.l = l;
         this.next = next;
     }
 
     public String toString() {
-        return "(" + d + "," + l + "," + next + ")";
+        return "(" + d + "," + (int) l + "," + next + ")";
     }
 }
 
@@ -45,11 +43,11 @@ public class LZ77 {
      * @return Decoded message
      */
     public static byte[] decode(List<LZ77Triple> triples) {
-        var bufferSize = triples.stream().mapToInt(s -> s.l + (s.next == -1 ? 0 : 1)).sum();
+        var bufferSize = triples.stream().mapToInt(s -> s.l + (s.next == -1 ? 0 : 1)).sum(); // O(n)
         var buffer = new byte[bufferSize];
         var ptr = 0;
 
-        for (var triple : triples) {
+        for (var triple : triples) { // O(n)
             if (triple.l > 0) {
                 var end = ptr - triple.d + triple.l;
                 for (var i = ptr - triple.d; i < end; ++i, ++ptr) {
@@ -124,13 +122,13 @@ public class LZ77 {
             var prefix = findLongestPrefixInWindow(symbols, symbolI);
 
             if (prefix.index == symbolI) {
-                result.add(new LZ77Triple(0, (byte) 0, symbols[symbolI]));
+                result.add(new LZ77Triple(0, (char) 0, symbols[symbolI]));
             } else {
                 var howFarBack = symbolI - prefix.index;
                 var nextSymbolI = symbolI + prefix.len;
                 var nextSymbol = (nextSymbolI < symbols.length) ? symbols[nextSymbolI] : -1;
 
-                result.add(new LZ77Triple(howFarBack, (short) prefix.len, nextSymbol));
+                result.add(new LZ77Triple(howFarBack, (char) prefix.len, nextSymbol));
                 symbolI += prefix.len;
             }
         }
@@ -195,6 +193,10 @@ public class LZ77 {
         return array;
     }
 
+    private static double calculateCompressionRate(int originalSize, int codedSize) {
+        return 100 * (1 - (double) codedSize / originalSize);
+    }
+
     private static void testByteData(String id, byte[] data) {
         var coder = new LZ77();
 
@@ -203,16 +205,16 @@ public class LZ77 {
         var decoded = time(() -> LZ77.decode(encoded.result));
 
         System.out.printf("Encoded in %.3f seconds\n", encoded.duration);
-        System.out.printf("Decoded in %.3f seconds\n", decoded.duration);
+        System.out.printf("Decoded in %.6f seconds\n", decoded.duration);
 
         var originalSize = data.length;
         var codedSize = encoded.result.size() * 6;
 
         System.out.printf("Before Compression was %d bytes, after compression %d bytes. Compression Ration %.3f\n",
-                originalSize, codedSize, 100 * (1 - (double) codedSize / originalSize));
+                originalSize, codedSize, calculateCompressionRate(originalSize, codedSize));
     }
 
-    private static void generateExperimentationDataForStructured() throws IOException {
+    private static void generateDataForTimingsAndCompression() throws IOException {
         File[] structuredFiles = (new File("./test_data/").listFiles());
 
         for (var file : structuredFiles) {
@@ -225,7 +227,62 @@ public class LZ77 {
         }
     }
 
+    private static void generateDataForVaryingParamters() throws IOException {
+        byte[][] testBytes = { Files.readAllBytes(new File("./test_data/ptt5").toPath()),
+                Files.readAllBytes(new File("./test_data/plrabn12.txt").toPath()),
+                Files.readAllBytes(new File("./test_data/world192.txt").toPath()) };
+
+        var W = 65535;
+        System.out.println("Fixed W:" + W);
+        for (var bytes : testBytes) {
+            System.out.println("For Length " + bytes.length);
+            for (var L = 3; L <= 11; ++L) {
+                var lookahead = (int) Math.pow(2, L);
+                var coder = new LZ77(W, lookahead);
+
+                var encoded = time(() -> coder.encode(bytes));
+
+                System.out.printf("L: %d Time:%.3f\n", lookahead, encoded.duration);
+            }
+        }
+
+        var L = 255;
+        System.out.println("Fixed L:" + L);
+        for (var bytes : testBytes) {
+            for (W = 3; W <= 18; ++W) {
+                var window = (int) Math.pow(2, W);
+                var coder = new LZ77(window, L);
+
+                var encoded = time(() -> coder.encode(bytes));
+
+                System.out.printf("W: %d Time:%.3f\n", window, encoded.duration);
+            }
+        }
+
+    }
+
+    private static void generateDataForDecoder() throws IOException {
+        File[] testFiles = (new File("./test_data").listFiles());
+        var coder = new LZ77(65535, 255);
+
+        for (var file : testFiles) {
+            var bytes = Files.readAllBytes(file.toPath());
+            var randomBytes = generateRandomSymbols(bytes.length);
+
+            var encodedStructured = coder.encode(bytes);
+            var encodedUnstructured = coder.encode(randomBytes);
+
+            var decoderStructuredTime = time(() -> LZ77.decode(encodedStructured));
+            var decoderUnstructuredTime = time(() -> LZ77.decode(encodedUnstructured));
+
+            System.out.println(
+                    file.length() + "   " + decoderStructuredTime.duration + "   " + decoderUnstructuredTime.duration);
+        }
+    }
+
     public static void main(String[] args) throws IOException {
-        generateExperimentationDataForStructured();
+        // generateDataForTimingsAndCompression();
+        // generateDataForVaryingParamters();
+        // generateDataForDecoder();
     }
 }
