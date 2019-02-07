@@ -1,5 +1,11 @@
 package experimentation;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Experimenter {
@@ -18,18 +24,36 @@ public class Experimenter {
         return result;
     }
 
-    private static boolean arraysEqual(byte[] bytes1, byte[] bytes2) {
-        if (bytes1.length != bytes2.length) {
-            return false;
+    private static byte[] loadTestFileContents(String fileName) throws IOException {
+        return Files.readAllBytes(Paths.get("./test_data/" + fileName));
+    }
+
+    private static byte[] loadTestFileContents(File f) throws IOException {
+        return Files.readAllBytes(f.toPath());
+    }
+
+    public static Map<String, byte[]> loadTestFiles(String... fileNames) throws IOException {
+        Map<String, byte[]> result = new HashMap<>();
+
+        for (String fileName : fileNames) {
+            byte[] contents = loadTestFileContents(fileName);
+            result.put(fileName, contents);
         }
 
-        for (var i = 0; i < bytes1.length; ++i) {
-            if (bytes1[i] != bytes2[i]) {
-                return false;
-            }
+        return result;
+    }
+
+    public static Map<String, byte[]> loadAllTestFiles() throws IOException {
+        Map<String, byte[]> result = new HashMap<>();
+
+        File testFolder = new File("./test_data");
+
+        for (File testFile : testFolder.listFiles()) {
+            byte[] contents = loadTestFileContents(testFile);
+            result.put(testFile.getName(), contents);
         }
 
-        return true;
+        return result;
     }
 
 }
