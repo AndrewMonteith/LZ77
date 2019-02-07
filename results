@@ -1,0 +1,104 @@
+------------ For alice29.txt
+Encoded in 3.110 seconds
+Decoded in 0.008933 seconds
+Before Compression was 152089 bytes, after compression 121134 bytes. Compression Ration 20.353
+------------ For 152089 - unstructured
+Encoded in 8.964 seconds
+Decoded in 0.003639 seconds
+Before Compression was 152089 bytes, after compression 363666 bytes. Compression Ration -139.114
+------------ For kennedy.xls
+Encoded in 16.144 seconds
+Decoded in 0.009224 seconds
+Before Compression was 1029744 bytes, after compression 494496 bytes. Compression Ration 51.979
+------------ For 1029744 - unstructured
+Encoded in 59.579 seconds
+Decoded in 0.005971 seconds
+Before Compression was 1029744 bytes, after compression 2357574 bytes. Compression Ration -128.948
+------------ For lcet10.txt
+Encoded in 8.909 seconds
+Decoded in 0.001177 seconds
+Before Compression was 426754 bytes, after compression 317094 bytes. Compression Ration 25.696
+------------ For 426754 - unstructured
+Encoded in 23.364 seconds
+Decoded in 0.002398 seconds
+Before Compression was 426754 bytes, after compression 988482 bytes. Compression Ration -131.628
+------------ For bible.txt
+Encoded in 83.755 seconds
+Decoded in 0.009635 seconds
+Before Compression was 4047392 bytes, after compression 2526462 bytes. Compression Ration 37.578
+------------ For 4047392 - unstructured
+Encoded in 241.656 seconds
+Decoded in 0.020044 seconds
+Before Compression was 4047392 bytes, after compression 9216462 bytes. Compression Ration -127.714
+------------ For ptt5
+Encoded in 5.942 seconds
+Decoded in 0.000603 seconds
+Before Compression was 513216 bytes, after compression 118410 bytes. Compression Ration 76.928
+------------ For 513216 - unstructured
+Encoded in 29.101 seconds
+Decoded in 0.002833 seconds
+Before Compression was 513216 bytes, after compression 1185168 bytes. Compression Ration -130.930
+------------ For cp.html
+Encoded in 0.096 seconds
+Decoded in 0.000096 seconds
+Before Compression was 24603 bytes, after compression 19842 bytes. Compression Ration 19.351
+------------ For 24603 - unstructured
+Encoded in 0.327 seconds
+Decoded in 0.000153 seconds
+Before Compression was 24603 bytes, after compression 68706 bytes. Compression Ration -179.259
+------------ For fields.c
+Encoded in 0.018 seconds
+Decoded in 0.000080 seconds
+Before Compression was 11150 bytes, after compression 8346 bytes. Compression Ration 25.148
+------------ For 11150 - unstructured
+Encoded in 0.071 seconds
+Decoded in 0.000093 seconds
+Before Compression was 11150 bytes, after compression 32634 bytes. Compression Ration -192.682
+------------ For asyoulik.txt
+Encoded in 2.425 seconds
+Decoded in 0.000431 seconds
+Before Compression was 125179 bytes, after compression 110334 bytes. Compression Ration 11.859
+------------ For 125179 - unstructured
+Encoded in 5.753 seconds
+Decoded in 0.000791 seconds
+Before Compression was 125179 bytes, after compression 302874 bytes. Compression Ration -141.953
+------------ For E.coli
+Encoded in 167.750 seconds
+Decoded in 0.010206 seconds
+Before Compression was 4638690 bytes, after compression 3031308 bytes. Compression Ration 34.652
+------------ For 4638690 - unstructured
+Encoded in 277.163 seconds
+Decoded in 0.023009 seconds
+Before Compression was 4638690 bytes, after compression 10563162 bytes. Compression Ration -127.719
+------------ For grammar.lsp
+Encoded in 0.003 seconds
+Decoded in 0.000031 seconds
+Before Compression was 3721 bytes, after compression 3630 bytes. Compression Ration 2.446
+------------ For 3721 - unstructured
+Encoded in 0.009 seconds
+Decoded in 0.000044 seconds
+Before Compression was 3721 bytes, after compression 11550 bytes. Compression Ration -210.400
+------------ For xargs.1
+Encoded in 0.005 seconds
+Decoded in 0.000035 seconds
+Before Compression was 4227 bytes, after compression 5058 bytes. Compression Ration -19.659
+------------ For 4227 - unstructured
+Encoded in 0.011 seconds
+Decoded in 0.000036 seconds
+Before Compression was 4227 bytes, after compression 12942 bytes. Compression Ration -206.175
+------------ For world192.txt
+Encoded in 43.340 seconds
+Decoded in 0.005621 seconds
+Before Compression was 2473400 bytes, after compression 1450746 bytes. Compression Ration 41.346
+------------ For 2473400 - unstructured
+Encoded in 144.817 seconds
+Decoded in 0.012581 seconds
+Before Compression was 2473400 bytes, after compression 5639964 bytes. Compression Ration -128.025
+------------ For plrabn12.txt
+Encoded in 12.416 seconds
+Decoded in 0.001491 seconds
+Before Compression was 481861 bytes, after compression 421074 bytes. Compression Ration 12.615
+------------ For 481861 - unstructured
+Encoded in 26.828 seconds
+Decoded in 0.002715 seconds
+Before Compression was 481861 bytes, after compression 1114224 bytes. Compression Ration -131.233
