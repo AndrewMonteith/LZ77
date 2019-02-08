@@ -21,17 +21,19 @@ public class HuffmanNode implements Comparable<HuffmanNode> {
         return right;
     }
 
-    public HuffmanNode(byte symbol, int frequency) {
+    HuffmanNode(byte symbol, int frequency) {
         this.symbol = symbol;
         this.frequency = frequency;
     }
 
-    public HuffmanNode(HuffmanNode left, HuffmanNode right) {
+    HuffmanNode(HuffmanNode left, HuffmanNode right) {
         this.left = left;
         this.right = right;
+
+        frequency = left.frequency + right.frequency;
     }
 
     public int compareTo(HuffmanNode node) {
-        return this.frequency - node.frequency;
+        return this.frequency - node.frequency ;
     }
 }

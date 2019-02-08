@@ -8,7 +8,7 @@ public final class TimedResult<T> {
         return result;
     }
 
-    public double getDuration() {
+    double getDuration() {
         return duration / 1_000_000_000.0;
     }
 
@@ -22,6 +22,6 @@ public final class TimedResult<T> {
         T result = supplier.get();
         var duration = System.nanoTime() - now;
 
-        return new TimedResult<T>(result, duration);
+        return new TimedResult<>(result, duration);
     }
 }

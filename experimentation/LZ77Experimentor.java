@@ -4,7 +4,6 @@ import java.util.Map;
 import java.io.IOException;
 
 import static experimentation.Experimenter.*;
-import experimentation.TimedResult;
 
 import coders.LZ77;
 

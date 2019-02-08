@@ -4,14 +4,7 @@ package coders;
     A simple implementation of huffman encoding
 */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-
-import coders.HuffmanEncodedMessage;
-import coders.HuffmanNode;
+import java.util.*;
 
 public class Huffman {
 
@@ -28,7 +21,7 @@ public class Huffman {
     private PriorityQueue<HuffmanNode> buildLeafNodes(byte[] symbols) {
         var frequencies = countFrequencies(symbols);
 
-        var result = new PriorityQueue<HuffmanNode>();
+        var result = new PriorityQueue<HuffmanNode>(frequencies.size());
 
         for (var symbolFreqEntry : frequencies.entrySet()) {
             result.add(new HuffmanNode(symbolFreqEntry.getKey(), symbolFreqEntry.getValue()));
@@ -112,13 +105,13 @@ public class Huffman {
         return decodedMessage;
     }
 
-    // public static void main(String[] args) {
-    // Huffman huff = new Huffman();
+     public static void main(String[] args) {
+     Huffman huff = new Huffman();
 
-    // HuffmanEncodedMessage message = huff.encode(new byte[] { 65, 65, 65, 66, 66,
-    // 67 });
+     HuffmanEncodedMessage message = huff.encode(new byte[] { 37, 37, 65, 65, 62, 78, 79, 41, 42 });
 
-    // System.out.println(message.getString());
-    // }
+     System.out.println(message.getSize());
+     System.out.println(message.getString());
+     }
 
 }

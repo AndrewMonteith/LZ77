@@ -1,17 +1,12 @@
 package coders;
 
-import java.util.List;
 import java.util.ArrayList;
-
-import coders.LZ77Triple;
-import coders.EncodedMessage;
-import coders.LZ77CodedMessage;
 
 class FatIndex {
     public final int index;
     public final int len;
 
-    public FatIndex(int index, int len) {
+    FatIndex(int index, int len) {
         this.index = index;
         this.len = len;
     }
@@ -22,12 +17,6 @@ public class LZ77 {
 
     private static final byte NO_SYMBOL = -1;
 
-    /**
-     * Decodes an LZ77 encoded message.
-     * 
-     * @param triples List to decode
-     * @return Decoded message
-     */
     public static byte[] decode(LZ77CodedMessage encodedMessage) {
         var bufferSize = encodedMessage.getDecodedSize();
         var buffer = new byte[bufferSize];
@@ -97,12 +86,6 @@ public class LZ77 {
         return new FatIndex(longestPrefixI, longestPrefixLen);
     }
 
-    /**
-     * Encodes an array of symbols
-     * 
-     * @param symbols symbols to encode
-     * @return encoded symbols
-     */
     public LZ77CodedMessage encode(byte[] symbols) {
         var triples = new ArrayList<LZ77Triple>();
 
@@ -124,26 +107,14 @@ public class LZ77 {
         return new LZ77CodedMessage(triples);
     }
 
-    /**
-     * Encodes a given string
-     * 
-     * @param s string to encode
-     * @return encoded string
-     */
     public LZ77CodedMessage encode(String s) {
         return encode(s.getBytes());
     }
 
-    /**
-     * Create LZ77 with window size 65535 and lookahead size 255
-     */
     public LZ77() {
         this(65535, 255);
     }
 
-    /**
-     * Create new LZ77 coder with specific window and lookahead sizes.
-     */
     public LZ77(int window, int lookahead) {
         this.window = window;
         this.lookahead = lookahead;

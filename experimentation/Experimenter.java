@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class Experimenter {
-    public static double calculateCompressionRatio(int originalSize, int codedSize) {
+class Experimenter {
+    static double calculateCompressionRatio(int originalSize, int codedSize) {
         return 100.0 * ((double) originalSize / codedSize);
     }
 
-    public static byte[] generateRandomSymbols(int size) {
+    static byte[] generateRandomSymbols(int size) {
         byte[] result = new byte[size];
         Random r = new Random();
 
@@ -32,7 +32,7 @@ public class Experimenter {
         return Files.readAllBytes(f.toPath());
     }
 
-    public static Map<String, byte[]> loadTestFiles(String... fileNames) throws IOException {
+    static Map<String, byte[]> loadTestFiles(String... fileNames) throws IOException {
         Map<String, byte[]> result = new HashMap<>();
 
         for (String fileName : fileNames) {
@@ -43,7 +43,7 @@ public class Experimenter {
         return result;
     }
 
-    public static Map<String, byte[]> loadAllTestFiles() throws IOException {
+    static Map<String, byte[]> loadAllTestFiles() throws IOException {
         Map<String, byte[]> result = new HashMap<>();
 
         File testFolder = new File("./test_data");

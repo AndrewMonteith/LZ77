@@ -1,9 +1,7 @@
 package experimentation;
 
 import static experimentation.Experimenter.*;
-import experimentation.TimedResult;
 import coders.Huffman;
-import coders.HuffmanEncodedMessage;
 
 import java.io.IOException;
 import java.util.Map;
@@ -24,6 +22,7 @@ public class HuffmanExperimentor {
         byte[] randomBytes = generateRandomSymbols(bytes.length);
         var randomEncoded = TimedResult.time(() -> coder.encode(randomBytes));
         var randomEncodedSize = randomEncoded.getResult().getSize();
+
         System.out.printf("Time %.3f Compression Ratio %.3f \n", randomEncoded.getDuration(),
                 calculateCompressionRatio(bytes.length, randomEncodedSize));
     }
