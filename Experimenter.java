@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class Experimenter {
-    public static double calculateCompressionRate(int originalSize, int codedSize) {
+    public static double calculateCompressionRatio(int originalSize, int codedSize) {
         return 100.0 * ((double) originalSize / codedSize);
     }
 
@@ -55,5 +55,4 @@ public class Experimenter {
 
         return result;
     }
-
 }

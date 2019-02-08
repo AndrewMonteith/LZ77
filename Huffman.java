@@ -10,40 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import coders.HuffmanEncodedMessage;
+import coders.HuffmanNode;
+
 public class Huffman {
-    public class Node implements Comparable<Node> {
-        private byte symbol;
-        private Node left, right;
-        private int frequency;
-
-        public boolean isLeaf() {
-            return left == null && right == null;
-        }
-
-        public Node(byte symbol, int frequency) {
-            this.symbol = symbol;
-            this.frequency = frequency;
-        }
-
-        public Node(Node left, Node right) {
-            this.left = left;
-            this.right = right;
-        }
-
-        public int compareTo(Node node) {
-            return this.frequency - node.frequency;
-        }
-    }
-
-    public class EncodedMessage {
-        public final Node tree;
-        public final String message;
-
-        public EncodedMessage(final Node tree, final String message) {
-            this.tree = tree;
-            this.message = message;
-        }
-    }
 
     private Map<Byte, Integer> countFrequencies(byte[] symbols) {
         var frequencies = new HashMap<Byte, Integer>();
@@ -55,43 +25,45 @@ public class Huffman {
         return frequencies;
     }
 
-    private PriorityQueue<Node> buildLeafNodes(byte[] symbols) {
+    private PriorityQueue<HuffmanNode> buildLeafNodes(byte[] symbols) {
         var frequencies = countFrequencies(symbols);
 
-        var result = new PriorityQueue<Node>();
+        var result = new PriorityQueue<HuffmanNode>();
 
         for (var symbolFreqEntry : frequencies.entrySet()) {
-            result.add(new Node(symbolFreqEntry.getKey(), symbolFreqEntry.getValue()));
+            result.add(new HuffmanNode(symbolFreqEntry.getKey(), symbolFreqEntry.getValue()));
         }
 
         return result;
     }
 
-    private Node buildHuffmanTree(byte[] symbols) {
-        PriorityQueue<Node> nodes = buildLeafNodes(symbols);
+    private HuffmanNode buildHuffmanTree(byte[] symbols) {
+        PriorityQueue<HuffmanNode> nodes = buildLeafNodes(symbols);
 
         while (nodes.size() > 1) {
-            nodes.add(new Node(nodes.remove(), nodes.remove()));
+            nodes.add(new HuffmanNode(nodes.remove(), nodes.remove()));
         }
 
         return nodes.remove();
     }
 
-    private void walkTreeToBuildCodewords(Node node, Map<Byte, String> codewords, String codeword) {
+    private void walkTreeToBuildCodewords(HuffmanNode node, Map<Byte, String> codewords, String codeword) {
         if (node.isLeaf()) {
-            codewords.put(node.symbol, codeword);
+            codewords.put(node.getSymbol(), codeword);
         } else {
-            if (node.left != null) {
-                walkTreeToBuildCodewords(node.left, codewords, codeword + '0');
+            HuffmanNode leftChild = node.getLeft(), rightChild = node.getRight();
+
+            if (leftChild != null) {
+                walkTreeToBuildCodewords(leftChild, codewords, codeword + '0');
             }
-            if (node.right != null) {
-                walkTreeToBuildCodewords(node.right, codewords, codeword + '1');
+            if (rightChild != null) {
+                walkTreeToBuildCodewords(rightChild, codewords, codeword + '1');
             }
         }
 
     }
 
-    private Map<Byte, String> buildCodewordsFromTree(Node tree) {
+    private Map<Byte, String> buildCodewordsFromTree(HuffmanNode tree) {
         Map<Byte, String> codewords = new HashMap<>();
 
         walkTreeToBuildCodewords(tree, codewords, "");
@@ -109,41 +81,44 @@ public class Huffman {
         return builder.toString();
     }
 
-    public EncodedMessage encode(byte[] symbols) {
-        Node tree = buildHuffmanTree(symbols);
+    public HuffmanEncodedMessage encode(byte[] symbols) {
+        HuffmanNode tree = buildHuffmanTree(symbols);
 
         Map<Byte, String> codewords = buildCodewordsFromTree(tree);
 
         String encodedMessage = encodeMessageUsingCodewords(symbols, codewords);
 
-        return new EncodedMessage(tree, encodedMessage);
+        return new HuffmanEncodedMessage(tree, encodedMessage);
     }
 
-    public static List<Byte> decode(EncodedMessage encodedMessage) {
+    public static List<Byte> decode(HuffmanEncodedMessage encodedMessage) {
         List<Byte> decodedMessage = new ArrayList<>();
-        String encodedMsg = encodedMessage.message;
+        String encodedMsg = encodedMessage.getString();
 
-        Node node = encodedMessage.tree;
-        for (int i = 0; i < encodedMessage.message.length(); ++i) {
+        HuffmanNode node = encodedMessage.getTree();
+        for (int i = 0; i < encodedMsg.length(); ++i) {
             if (encodedMsg.charAt(i) == '0') {
-                node = node.left;
+                node = node.getLeft();
             } else {
-                node = node.right;
+                node = node.getRight();
             }
 
             if (node.isLeaf()) {
-                decodedMessage.add(node.symbol);
-                node = encodedMessage.tree;
+                decodedMessage.add(node.getSymbol());
+                node = encodedMessage.getTree();
             }
         }
 
         return decodedMessage;
     }
 
-    public static void main(String[] args) {
-        Huffman huff = new Huffman();
+    // public static void main(String[] args) {
+    // Huffman huff = new Huffman();
 
-        EncodedMessage message = huff.encode(new byte[] { 65, 65, 65, 66, 66, 67 });
-    }
+    // HuffmanEncodedMessage message = huff.encode(new byte[] { 65, 65, 65, 66, 66,
+    // 67 });
+
+    // System.out.println(message.getString());
+    // }
 
 }

@@ -3,6 +3,10 @@ package coders;
 import java.util.List;
 import java.util.ArrayList;
 
+import coders.LZ77Triple;
+import coders.EncodedMessage;
+import coders.LZ77CodedMessage;
+
 class FatIndex {
     public final int index;
     public final int len;
@@ -18,34 +22,20 @@ public class LZ77 {
 
     private static final byte NO_SYMBOL = -1;
 
-    public static final class Triple {
-        public final int d;
-        public final char l; // char are unsigned byte.
-        public final byte next;
-
-        public Triple(int d, char l, byte next) {
-            this.d = d;
-            this.l = l;
-            this.next = next;
-        }
-
-        public String toString() {
-            return "(" + d + "," + (int) l + "," + next + ")";
-        }
-    }
-
     /**
      * Decodes an LZ77 encoded message.
      * 
      * @param triples List to decode
      * @return Decoded message
      */
-    public static byte[] decode(List<Triple> triples) {
-        var bufferSize = triples.stream().mapToInt(s -> s.l + (s.next == -1 ? 0 : 1)).sum(); // O(n)
+    public static byte[] decode(LZ77CodedMessage encodedMessage) {
+        var bufferSize = encodedMessage.getDecodedSize();
         var buffer = new byte[bufferSize];
         var ptr = 0;
 
-        for (var triple : triples) { // O(n)
+        for (int n = 0; n < encodedMessage.getNumberOfTriples(); ++n) {
+            var triple = encodedMessage.getTriple(n);
+
             if (triple.l > 0) {
                 var end = ptr - triple.d + triple.l;
                 for (var i = ptr - triple.d; i < end; ++i, ++ptr) {
@@ -113,25 +103,25 @@ public class LZ77 {
      * @param symbols symbols to encode
      * @return encoded symbols
      */
-    public List<Triple> encode(byte[] symbols) {
-        var result = new ArrayList<Triple>();
+    public LZ77CodedMessage encode(byte[] symbols) {
+        var triples = new ArrayList<LZ77Triple>();
 
         for (int symbolI = 0; symbolI < symbols.length; ++symbolI) {
             var prefix = findLongestPrefixInWindow(symbols, symbolI);
 
             if (prefix.index == symbolI) {
-                result.add(new Triple(0, (char) 0, symbols[symbolI]));
+                triples.add(new LZ77Triple(0, (char) 0, symbols[symbolI]));
             } else {
                 var howFarBack = symbolI - prefix.index;
                 var nextSymbolI = symbolI + prefix.len;
                 var nextSymbol = (nextSymbolI < symbols.length) ? symbols[nextSymbolI] : -1;
 
-                result.add(new Triple(howFarBack, (char) prefix.len, nextSymbol));
+                triples.add(new LZ77Triple(howFarBack, (char) prefix.len, nextSymbol));
                 symbolI += prefix.len;
             }
         }
 
-        return result;
+        return new LZ77CodedMessage(triples);
     }
 
     /**
@@ -140,7 +130,7 @@ public class LZ77 {
      * @param s string to encode
      * @return encoded string
      */
-    public List<Triple> encode(String s) {
+    public LZ77CodedMessage encode(String s) {
         return encode(s.getBytes());
     }
 

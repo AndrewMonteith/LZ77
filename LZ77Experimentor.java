@@ -14,18 +14,18 @@ public class LZ77Experimentor {
 
         System.out.println("------------ For " + id);
         var encoded = TimedResult.time(() -> coder.encode(data));
-        var triples = encoded.getResult();
+        var encodedMessage = encoded.getResult();
 
-        var decoded = TimedResult.time(() -> LZ77.decode(triples));
+        var decoded = TimedResult.time(() -> LZ77.decode(encodedMessage));
 
         System.out.printf("Encoded in %.3f seconds\n", encoded.getDuration());
         System.out.printf("Decoded in %.6f seconds\n", decoded.getDuration());
 
         var originalSize = data.length;
-        var codedSize = triples.size() * 6;
+        var codedSize = encodedMessage.getSize();
 
         System.out.printf("Before Compression was %d bytes, after compression %d bytes. Compression Ration %.3f\n",
-                originalSize, codedSize, calculateCompressionRate(originalSize, codedSize));
+                originalSize, codedSize, calculateCompressionRatio(originalSize, codedSize));
     }
 
     private static void generateDataForTimingsAndCompression() throws IOException {
@@ -73,7 +73,7 @@ public class LZ77Experimentor {
                 var encoded = TimedResult.time(() -> coder.encode(bytes));
 
                 System.out.printf("W: %d Compression:%.3f\n", window,
-                        calculateCompressionRate(bytes.length, encoded.getResult().size() * 6));
+                        calculateCompressionRatio(bytes.length, encoded.getResult().getSize()));
             }
         }
     }
