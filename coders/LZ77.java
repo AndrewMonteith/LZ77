@@ -30,7 +30,7 @@ public class LZ77 implements Encoder {
                 }
             }
 
-            if (n != encodedMessage.getNumberOfTriples() - 1) { // final triple will have no symbol
+            if (ptr != encodedMessage.getDecodedSize()) { // final triple will have no symbol
                 buffer[ptr] = triple.next;
                 ptr += 1;
             }
@@ -102,7 +102,7 @@ public class LZ77 implements Encoder {
             }
         }
 
-        return new LZ77CodedMessage(triples);
+        return new LZ77CodedMessage(triples, symbols.length);
     }
 
     public LZ77CodedMessage encode(String s) {

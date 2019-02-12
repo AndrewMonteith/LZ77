@@ -7,6 +7,7 @@ import java.util.List;
 
 public class LZ77CodedMessage implements EncodedMessage {
     private List<LZ77Triple> triples;
+    private int sizeOfDecodedMessage;
 
     public LZ77Triple getTriple(int i) {
         return triples.get(i);
@@ -21,10 +22,11 @@ public class LZ77CodedMessage implements EncodedMessage {
     }
 
     public int getDecodedSize() {
-        return triples.stream().mapToInt(s -> s.l + (s.next == -1 ? 0 : 1)).sum();
+        return sizeOfDecodedMessage;
     }
 
-    public LZ77CodedMessage(List<LZ77Triple> triples) {
+    public LZ77CodedMessage(List<LZ77Triple> triples, int sizeOfDecodedMessage) {
         this.triples = triples;
+        this.sizeOfDecodedMessage = sizeOfDecodedMessage;
     }
 }
