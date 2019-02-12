@@ -6,7 +6,7 @@ package coders;
 
 import java.util.*;
 
-public class Huffman implements Encoder {
+public class Huffman implements Coder<HuffmanEncodedMessage> {
 
     private Map<Byte, Integer> countFrequencies(byte[] symbols) {
         var frequencies = new HashMap<Byte, Integer>();
@@ -84,7 +84,15 @@ public class Huffman implements Encoder {
         return new HuffmanEncodedMessage(tree, encodedMessage);
     }
 
-    public static List<Byte> decode(HuffmanEncodedMessage encodedMessage) {
+    private byte[] byteListToArray(List<Byte> bytes) {
+        byte[] result = new byte[bytes.size()];
+        for (var i = 0; i < result.length; ++i) {
+            result[i] = bytes.get(i);
+        }
+        return result;
+    }
+
+    public byte[] decode(HuffmanEncodedMessage encodedMessage) {
         List<Byte> decodedMessage = new ArrayList<>();
         String encodedMsg = encodedMessage.getString();
 
@@ -102,16 +110,7 @@ public class Huffman implements Encoder {
             }
         }
 
-        return decodedMessage;
+        return byteListToArray(decodedMessage);
     }
-
-     public static void main(String[] args) {
-     Huffman huff = new Huffman();
-
-     HuffmanEncodedMessage message = huff.encode(new byte[] { 37, 37, 65, 65, 62, 78, 79, 41, 42 });
-
-     System.out.println(message.getSize());
-     System.out.println(message.getString());
-     }
 
 }

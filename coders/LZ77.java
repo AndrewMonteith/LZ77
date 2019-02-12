@@ -12,10 +12,10 @@ class FatIndex {
     }
 }
 
-public class LZ77 implements Encoder {
+public class LZ77 implements Coder <LZ77CodedMessage> {
     private final int window, lookahead;
 
-    public static byte[] decode(LZ77CodedMessage encodedMessage) {
+    public byte[] decode(LZ77CodedMessage encodedMessage) {
         var bufferSize = encodedMessage.getDecodedSize();
         var buffer = new byte[bufferSize];
         var ptr = 0;

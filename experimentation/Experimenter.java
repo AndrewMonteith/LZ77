@@ -1,8 +1,6 @@
 package experimentation;
 
-import coders.Encoder;
-import coders.Huffman;
-import coders.LZ77;
+import coders.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +58,7 @@ class Experimenter {
         return result;
     }
 
-    private static void generateDataForVariousFormats(String encodeId, Encoder encoder) throws IOException {
+    private static void generateDataForVariousFormats(String encodeId, Coder encoder) throws IOException {
         Map<String, byte[]> testFiles = loadTestFiles("ptt5", "cp.html", "fields.c", "tree.jpg");
 
         System.out.println("Testing:" + encodeId);
@@ -76,8 +74,29 @@ class Experimenter {
         }
     }
 
+    private static <T extends EncodedMessage> void generateDataForDecoding(String coderId, Coder<T> coder) throws IOException {
+        Map<String, byte[]> testFiles = loadAllTestFiles();
+
+        System.out.println("Decoding Data for " + coderId);
+        for (Map.Entry<String, byte[]> testFile : testFiles.entrySet()) {
+            byte[] structuredBytes = testFile.getValue();
+            byte[] unstructuredBytes = generateRandomSymbols(structuredBytes.length);
+
+            T encodedStructured = coder.encode(structuredBytes);
+            T encodedUnstructured = coder.encode(unstructuredBytes);
+
+            var timedStructuredDecode = TimedResult.time(() -> coder.decode(encodedStructured));
+            var timedUnstructuredDecode = TimedResult.time(() -> coder.decode(encodedUnstructured));
+
+            System.out.printf("Structured %d in %.7f\n", structuredBytes.length, timedStructuredDecode.getDuration());
+            System.out.printf("Unstructured %d in %.7f\n", structuredBytes.length, timedUnstructuredDecode.getDuration());
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         generateDataForVariousFormats("LZ77", new LZ77());
         generateDataForVariousFormats("Huffman", new Huffman());
+        generateDataForDecoding("LZ77", new LZ77());
+        generateDataForDecoding("Huffman", new LZ77());
     }
 }

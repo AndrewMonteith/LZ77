@@ -1,13 +1,14 @@
 package experimentation;
 
 import static experimentation.Experimenter.*;
+
 import coders.Huffman;
 
 import java.io.IOException;
 import java.util.Map;
 
 public class HuffmanExperimentor {
-    private static void printStatsForEncoding(String id, byte[] bytes) {
+    private static void printStatsForEncoding(String id, byte[] bytes)  {
         var coder = new Huffman();
 
         var encoded = TimedResult.time(() -> coder.encode(bytes));
@@ -33,24 +34,8 @@ public class HuffmanExperimentor {
         }
     }
 
-    private static void generateDataForDecoding() throws IOException {
-        Map<String, byte[]> testFiles = loadAllTestFiles();
-        var coder = new Huffman();
-
-        for (Map.Entry<String, byte[]> testFile : testFiles.entrySet()) {
-            byte[] bytes = testFile.getValue();
-
-            var encoded = coder.encode(bytes);
-
-            var timedDecoded = TimedResult.time(() -> Huffman.decode(encoded));
-            System.out.printf("Decoded Size %d in %.3f\n", bytes.length, timedDecoded.getDuration());
-        }
-    }
-
-
-
     public static void main(String[] args) throws IOException {
         generateDataForEncoding();
-        generateDataForDecoding();
+//        generateDataForDecoding();
     }
 }

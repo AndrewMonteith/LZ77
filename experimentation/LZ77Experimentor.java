@@ -15,7 +15,7 @@ public class LZ77Experimentor {
         var encoded = TimedResult.time(() -> coder.encode(data));
         var encodedMessage = encoded.getResult();
 
-        var decoded = TimedResult.time(() -> LZ77.decode(encodedMessage));
+        var decoded = TimedResult.time(() -> coder.decode(encodedMessage));
 
         System.out.printf("Encoded in %.3f seconds\n", encoded.getDuration());
         System.out.printf("Decoded in %.6f seconds\n", decoded.getDuration());
@@ -77,29 +77,9 @@ public class LZ77Experimentor {
         }
     }
 
-    private static void generateDataForDecoder() throws IOException {
-        Map<String, byte[]> testFiles = loadAllTestFiles();
-        var coder = new LZ77(65535, 255);
-
-        for (Map.Entry<String, byte[]> testFile : testFiles.entrySet()) {
-            var bytes = testFile.getValue();
-            var randomBytes = generateRandomSymbols(bytes.length);
-
-            var encodedStructured = coder.encode(bytes);
-            var encodedUnstructured = coder.encode(randomBytes);
-
-            var decoderStructuredTime = TimedResult.time(() -> LZ77.decode(encodedStructured));
-            var decoderUnstructuredTime = TimedResult.time(() -> LZ77.decode(encodedUnstructured));
-
-            System.out.println(bytes.length + "   " + decoderStructuredTime.getDuration() + "   "
-                    + decoderUnstructuredTime.getDuration());
-        }
-    }
-
     public static void main(String[] args) throws IOException {
         generateDataForTimingsAndCompression();
         generateDataForVaryingParamters();
-        generateDataForDecoder();
     }
 
 }
