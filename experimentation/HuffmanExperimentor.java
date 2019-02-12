@@ -7,36 +7,50 @@ import java.io.IOException;
 import java.util.Map;
 
 public class HuffmanExperimentor {
-    private static void printStatsForData(String id, byte[] bytes) {
+    private static void printStatsForEncoding(String id, byte[] bytes) {
         var coder = new Huffman();
 
-        System.out.println("For " + id);
         var encoded = TimedResult.time(() -> coder.encode(bytes));
         var encodedSize = encoded.getResult().getSize();
 
-        System.out.printf("Time %.3f Compression Ratio %.3f \n", encoded.getDuration(),
+        System.out.printf("%s Time %.5f Compression Ratio %.5f \n", id, encoded.getDuration(),
                 calculateCompressionRatio(bytes.length, encodedSize));
-
-        System.out.println("For Unstructured " + id);
 
         byte[] randomBytes = generateRandomSymbols(bytes.length);
         var randomEncoded = TimedResult.time(() -> coder.encode(randomBytes));
         var randomEncodedSize = randomEncoded.getResult().getSize();
 
-        System.out.printf("Time %.3f Compression Ratio %.3f \n", randomEncoded.getDuration(),
+        System.out.printf("Unstructured %s Time %.5f Compression Ratio %.5f \n", id, randomEncoded.getDuration(),
                 calculateCompressionRatio(bytes.length, randomEncodedSize));
     }
 
-    private static void generateData() throws IOException {
+    private static void generateDataForEncoding() throws IOException {
         Map<String, byte[]> testFiles = loadAllTestFiles();
 
         for (Map.Entry<String, byte[]> testFile : testFiles.entrySet()) {
             byte[] bytes = testFile.getValue();
-            printStatsForData(String.valueOf(bytes.length), bytes);
+            printStatsForEncoding(String.valueOf(bytes.length), bytes);
         }
     }
 
+    private static void generateDataForDecoding() throws IOException {
+        Map<String, byte[]> testFiles = loadAllTestFiles();
+        var coder = new Huffman();
+
+        for (Map.Entry<String, byte[]> testFile : testFiles.entrySet()) {
+            byte[] bytes = testFile.getValue();
+
+            var encoded = coder.encode(bytes);
+
+            var timedDecoded = TimedResult.time(() -> Huffman.decode(encoded));
+            System.out.printf("Decoded Size %d in %.3f\n", bytes.length, timedDecoded.getDuration());
+        }
+    }
+
+
+
     public static void main(String[] args) throws IOException {
-        generateData();
+        generateDataForEncoding();
+        generateDataForDecoding();
     }
 }

@@ -12,10 +12,8 @@ class FatIndex {
     }
 }
 
-public class LZ77 {
+public class LZ77 implements Encoder {
     private final int window, lookahead;
-
-    private static final byte NO_SYMBOL = -1;
 
     public static byte[] decode(LZ77CodedMessage encodedMessage) {
         var bufferSize = encodedMessage.getDecodedSize();
@@ -32,7 +30,7 @@ public class LZ77 {
                 }
             }
 
-            if (triple.next != NO_SYMBOL) {
+            if (n != encodedMessage.getNumberOfTriples() - 1) { // final triple will have no symbol
                 buffer[ptr] = triple.next;
                 ptr += 1;
             }

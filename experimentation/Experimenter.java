@@ -1,5 +1,9 @@
 package experimentation;
 
+import coders.Encoder;
+import coders.Huffman;
+import coders.LZ77;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,5 +58,26 @@ class Experimenter {
         }
 
         return result;
+    }
+
+    private static void generateDataForVariousFormats(String encodeId, Encoder encoder) throws IOException {
+        Map<String, byte[]> testFiles = loadTestFiles("ptt5", "cp.html", "fields.c", "tree.jpg");
+
+        System.out.println("Testing:" + encodeId);
+        for (Map.Entry<String, byte[]> testFile : testFiles.entrySet()) {
+            byte[] bytes = testFile.getValue();
+
+            var encodedResult = TimedResult.time(() -> encoder.encode(bytes));
+
+            System.out.println("For file:" + testFile.getKey());
+            System.out.printf("Encoded in: %.6f\n", encodedResult.getDuration());
+            System.out.println("Compression Ratio:" +
+                    calculateCompressionRatio(bytes.length, encodedResult.getResult().getSize()));
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        generateDataForVariousFormats("LZ77", new LZ77());
+        generateDataForVariousFormats("Huffman", new Huffman());
     }
 }

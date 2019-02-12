@@ -26,6 +26,7 @@ public class HuffmanEncodedMessage implements EncodedMessage {
                 nodes.add(rightChild);
             }
         }
+        
         return total;
     }
 

@@ -6,7 +6,7 @@ package coders;
 
 import java.util.*;
 
-public class Huffman {
+public class Huffman implements Encoder {
 
     private Map<Byte, Integer> countFrequencies(byte[] symbols) {
         var frequencies = new HashMap<Byte, Integer>();
