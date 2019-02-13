@@ -1,6 +1,13 @@
 package coders;
 
+import experimentation.LZ77ProgramInterface;
+
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 class FatIndex {
     public final int index;
@@ -105,10 +112,6 @@ public class LZ77 implements Coder <LZ77CodedMessage> {
         return new LZ77CodedMessage(triples, symbols.length);
     }
 
-    public LZ77CodedMessage encode(String s) {
-        return encode(s.getBytes());
-    }
-
     public LZ77() {
         this(65535, 255);
     }
@@ -116,5 +119,19 @@ public class LZ77 implements Coder <LZ77CodedMessage> {
     public LZ77(int window, int lookahead) {
         this.window = window;
         this.lookahead = lookahead;
+    }
+
+
+    public static void main(String[] args) throws FileNotFoundException {
+        LZ77ProgramInterface program = new LZ77ProgramInterface(args);
+
+        if (program.wantsToDecode()) {
+            program.decode();
+        } else if (program.wantsToEncode()) {
+            program.encode();
+        } else {
+            program.printUsage();
+        }
+
     }
 }
