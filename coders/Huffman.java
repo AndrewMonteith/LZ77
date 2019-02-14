@@ -1,13 +1,17 @@
 package coders;
 
-/*
-    A simple implementation of huffman encoding
-*/
-
 import java.util.*;
 
+/**
+ * Huffman Coder
+ */
 public class Huffman implements Coder<HuffmanEncodedMessage> {
 
+    /**
+     * Computes a frequency distribution of a given sequence of symbols
+     * @param symbols Sequence of symbols
+     * @return Frequency Distribution
+     */
     private Map<Byte, Integer> countFrequencies(byte[] symbols) {
         var frequencies = new HashMap<Byte, Integer>();
 
@@ -18,6 +22,11 @@ public class Huffman implements Coder<HuffmanEncodedMessage> {
         return frequencies;
     }
 
+    /**
+     * Creates the leaf nodes for a huffman tree from a given sequence of symbols
+     * @param symbols Sequence of symbols
+     * @return Priority queue of huffman nodes based on frequency of node
+     */
     private PriorityQueue<HuffmanNode> buildLeafNodes(byte[] symbols) {
         var frequencies = countFrequencies(symbols);
 
@@ -30,6 +39,11 @@ public class Huffman implements Coder<HuffmanEncodedMessage> {
         return result;
     }
 
+    /**
+     * Create a huffman tree from a given sequence of symbols
+     * @param symbols Sequence of symbols
+     * @return Root node of huffman tree
+     */
     private HuffmanNode buildHuffmanTree(byte[] symbols) {
         PriorityQueue<HuffmanNode> nodes = buildLeafNodes(symbols);
 
@@ -56,6 +70,11 @@ public class Huffman implements Coder<HuffmanEncodedMessage> {
 
     }
 
+    /**
+     * Create the codewords of the code from a huffman tree
+     * @param tree Huffman tree
+     * @return All codewords in the code
+     */
     private Map<Byte, String> buildCodewordsFromTree(HuffmanNode tree) {
         Map<Byte, String> codewords = new HashMap<>();
 
@@ -64,6 +83,12 @@ public class Huffman implements Coder<HuffmanEncodedMessage> {
         return codewords;
     }
 
+    /**
+     * Encodes a sequences of bytes using the codewords of a huffman code into a string of 0 & 1's
+     * @param symbols Sequence of bytes to encode
+     * @param codewords codewords of the huffman code
+     * @return raw string of encoded message
+     */
     private String encodeMessageUsingCodewords(byte[] symbols, Map<Byte, String> codewords) {
         StringBuilder builder = new StringBuilder();
 
@@ -74,6 +99,11 @@ public class Huffman implements Coder<HuffmanEncodedMessage> {
         return builder.toString();
     }
 
+    /**
+     * Encodes a sequence of bytes into a encoded message
+     * @param symbols sequence of bytes
+     * @return encoded huffman message
+     */
     public HuffmanEncodedMessage encode(byte[] symbols) {
         HuffmanNode tree = buildHuffmanTree(symbols);
 
@@ -92,6 +122,11 @@ public class Huffman implements Coder<HuffmanEncodedMessage> {
         return result;
     }
 
+    /**
+     * Decodes an encoded message to it's equivalent sequence of bytes
+     * @param encodedMessage Encoded message to decode
+     * @return Equivalent sequence of bytes
+     */
     public byte[] decode(HuffmanEncodedMessage encodedMessage) {
         List<Byte> decodedMessage = new ArrayList<>();
         String encodedMsg = encodedMessage.getString();

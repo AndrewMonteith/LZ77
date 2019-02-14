@@ -1,13 +1,7 @@
 package coders;
 
-import experimentation.LZ77ProgramInterface;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
 
 class FatIndex {
     public final int index;
@@ -19,9 +13,17 @@ class FatIndex {
     }
 }
 
+/**
+ * LZ77 Coder
+ */
 public class LZ77 implements Coder <LZ77CodedMessage> {
     private final int window, lookahead;
 
+    /**
+     * Decodes an LZ77 coded message into it's equivalent sequence of bytes
+     * @param encodedMessage instance of the encoded message
+     * @return equivalent sequence of bytes
+     */
     public byte[] decode(LZ77CodedMessage encodedMessage) {
         var bufferSize = encodedMessage.getDecodedSize();
         var buffer = new byte[bufferSize];
@@ -46,7 +48,7 @@ public class LZ77 implements Coder <LZ77CodedMessage> {
         return buffer;
     }
 
-    private boolean doSequencesMatch(byte[] symbols, int index1, int index2, int length) {
+    private boolean doSubsequencesMatch(byte[] symbols, int index1, int index2, int length) {
         var termianteIndex = index1 + length;
 
         for (; index1 < termianteIndex; ++index1, ++index2) {
@@ -73,7 +75,7 @@ public class LZ77 implements Coder <LZ77CodedMessage> {
             var lookingOutsideWindow = windowI + curPrefixLen > symbolI;
             if (lookingOutsideWindow) {
                 --windowI;
-            } else if (doSequencesMatch(symbols, windowI, symbolI, curPrefixLen)) {
+            } else if (doSubsequencesMatch(symbols, windowI, symbolI, curPrefixLen)) {
                 longestPrefixI = windowI;
                 longestPrefixLen = curPrefixLen;
 
@@ -91,6 +93,11 @@ public class LZ77 implements Coder <LZ77CodedMessage> {
         return new FatIndex(longestPrefixI, longestPrefixLen);
     }
 
+    /**
+     * Encodes symbols using LZ77 coding
+     * @param symbols symbols to encode
+     * @return equivalent encoded message
+     */
     public LZ77CodedMessage encode(byte[] symbols) {
         var triples = new ArrayList<LZ77Triple>();
 

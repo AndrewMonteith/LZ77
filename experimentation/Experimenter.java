@@ -59,7 +59,7 @@ class Experimenter {
     }
 
     private static void generateDataForVariousFormats(String encodeId, Coder encoder) throws IOException {
-        Map<String, byte[]> testFiles = loadTestFiles("ptt5", "cp.html", "fields.c", "tree.jpg");
+        Map<String, byte[]> testFiles = loadTestFiles("ptt5", "bible.txt", "fields.c", "tree.jpg", "video.mp4", "audio.mp3");
 
         System.out.println("Testing:" + encodeId);
         for (Map.Entry<String, byte[]> testFile : testFiles.entrySet()) {
@@ -67,7 +67,7 @@ class Experimenter {
 
             var encodedResult = TimedResult.time(() -> encoder.encode(bytes));
 
-            System.out.println("For file:" + testFile.getKey());
+            System.out.println("For file:" + testFile.getKey() + " " + bytes.length);
             System.out.printf("Encoded in: %.6f\n", encodedResult.getDuration());
             System.out.println("Compression Ratio:" +
                     calculateCompressionRatio(bytes.length, encodedResult.getResult().getSize()));
@@ -86,17 +86,16 @@ class Experimenter {
             T encodedUnstructured = coder.encode(unstructuredBytes);
 
             var timedStructuredDecode = TimedResult.time(() -> coder.decode(encodedStructured));
-            var timedUnstructuredDecode = TimedResult.time(() -> coder.decode(encodedUnstructured));
+//            var timedUnstructuredDecode = TimedResult.time(() -> coder.decode(encodedUnstructured));
+            System.out.printf("%d => %d  :  %.7f\n", structuredBytes.length, encodedStructured.getSize(), timedStructuredDecode.getDuration());
 
-            System.out.printf("Structured %d in %.7f\n", structuredBytes.length, timedStructuredDecode.getDuration());
-            System.out.printf("Unstructured %d in %.7f\n", structuredBytes.length, timedUnstructuredDecode.getDuration());
+//            System.out.printf("Structured     %d  :  %.7f\n", encodedStructured.getSize(), timedStructuredDecode.getDuration());
+//            System.out.printf("Unstructured   %d  :  %.7f\n", encodedUnstructured.getSize(), timedUnstructuredDecode.getDuration());
         }
     }
 
     public static void main(String[] args) throws IOException {
-        generateDataForVariousFormats("LZ77", new LZ77());
-        generateDataForVariousFormats("Huffman", new Huffman());
-        generateDataForDecoding("LZ77", new LZ77());
-        generateDataForDecoding("Huffman", new LZ77());
+        generateDataForDecoding("------------ Huffman", new Huffman());
+//        generateDataForDecoding("------------ LZ77", new LZ77());
     }
 }

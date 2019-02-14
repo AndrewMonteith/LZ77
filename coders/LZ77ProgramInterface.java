@@ -1,8 +1,4 @@
-package experimentation;
-
-import coders.LZ77;
-import coders.LZ77CodedMessage;
-import coders.LZ77Triple;
+package coders;
 
 import java.io.*;
 import java.nio.file.Files;

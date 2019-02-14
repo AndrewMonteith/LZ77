@@ -41,7 +41,7 @@ public class LZ77Experimentor {
     }
 
     private static void generateDataForVaryingParamters() throws IOException {
-        Map<String, byte[]> testFiles = loadTestFiles("ptt5", "plrab12.txt", "world192.txt");
+        Map<String, byte[]> testFiles = loadTestFiles("ptt5", "plrabn12.txt", "world192.txt");
 
         var W = 65535;
         System.out.println("Fixed W:" + W);
@@ -55,8 +55,10 @@ public class LZ77Experimentor {
 
                 var encoded = TimedResult.time(() -> coder.encode(bytes));
 
-                System.out.printf("L: %d Time:%.3f\n", lookahead, encoded.getDuration());
+//                System.out.printf("L: %d Time:%.3f\n", lookahead, encoded.getDuration());
+                System.out.printf("L: %d Compression:%.3f\n", lookahead, calculateCompressionRatio(bytes.length, encoded.getResult().getSize()));
             }
+
         }
 
         var L = 255;
@@ -78,7 +80,7 @@ public class LZ77Experimentor {
     }
 
     public static void main(String[] args) throws IOException {
-        generateDataForTimingsAndCompression();
+//        generateDataForTimingsAndCompression();
         generateDataForVaryingParamters();
     }
 

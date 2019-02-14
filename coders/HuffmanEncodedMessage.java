@@ -3,6 +3,9 @@ package coders;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
+/**
+ * Instance of an encoded message using huffman coding
+ */
 public class HuffmanEncodedMessage implements EncodedMessage {
     private final HuffmanNode tree;
     private final String message;
